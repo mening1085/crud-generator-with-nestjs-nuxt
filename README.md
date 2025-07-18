@@ -1,37 +1,37 @@
 # CRUD Generator : NestJS + Nuxt3
 
-โปรเจกต์นี้เป็นเครื่องมือสำหรับสร้างโค้ด CRUD (Create, Read, Update, Delete) อัตโนมัติ รองรับทั้งฝั่ง Backend (NestJS) และ Frontend (Nuxt3)
+This project is a tool for automatically generating CRUD (Create, Read, Update, Delete) code, supporting both Backend (NestJS) and Frontend (Nuxt3).
 
-## วิธีการติดตั้ง
+## Installation
 
 ```bash
 npm install
 ```
 
-## โครงสร้างไฟล์หลัก
+## Main File Structure
 
 ```
 crud-generator/
-├── crud-gen-backend/      # โค้ดฝั่ง NestJS (Backend)
-├── crud-gen-frontend/     # โค้ดฝั่ง Nuxt3 (Frontend)
+├── crud-gen-backend/      # NestJS (Backend) code
+├── crud-gen-frontend/     # Nuxt3 (Frontend) code
 ├── tools/
-│   ├── schemas/           # ตัวอย่าง schema สำหรับ generate
-│   └── templates/         # template สำหรับ generate ไฟล์
-├── plopfile.js            # กำหนด logic ของ generator
-├── package.json           # dependencies หลัก
+│   ├── schemas/           # Example schemas for generation
+│   └── templates/         # Templates for file generation
+├── plopfile.js            # Generator logic configuration
+├── package.json           # Main dependencies
 └── README.md
 ```
 
-- **crud-gen-backend/** : โค้ดฝั่ง Backend (NestJS)
-- **crud-gen-frontend/** : โค้ดฝั่ง Frontend (Nuxt3)
-- **tools/schemas/** : เก็บไฟล์ schema ที่ใช้สำหรับ generate (แนะนำให้สร้าง schema ใหม่ในนี้)
-- **tools/templates/** : เก็บ template สำหรับ generate ไฟล์ต่าง ๆ
-- **plopfile.js** : กำหนด logic และ flow ของ generator
-- **package.json** : ข้อมูล dependencies หลักของโปรเจกต์
+- **crud-gen-backend/** : Backend code (NestJS)
+- **crud-gen-frontend/** : Frontend code (Nuxt3)
+- **tools/schemas/** : Store schema files for generation (recommended to create new schemas here)
+- **tools/templates/** : Store templates for generating various files
+- **plopfile.js** : Define the logic and flow of the generator
+- **package.json** : Main project dependencies
 
-## วิธีการใช้งาน
+## Usage
 
-1. สร้างไฟล์ schema ที่ต้องการใน `tools/schemas/` เช่น
+1. Create the desired schema file in `tools/schemas/`, for example:
 
 ```js
 // tools/schemas/product.js
@@ -45,28 +45,28 @@ module.exports = {
 };
 ```
 
-2. รันคำสั่ง plop เพื่อเริ่มต้น generator
+2. Run the plop command to start the generator
 
 ```bash
 npx plop
 ```
 
-3. เลือกว่าจะ Create หรือ Delete
-4. กำหนด destination
-5. เลือกชื่อ schema ที่จะสร้าง
-6. ไฟล์ที่สร้างจะอยู่ในโฟลเดอร์ที่กำหนดไว้
+3. Choose whether to Create or Delete
+4. Specify the destination
+5. Select the schema name to generate
+6. The generated files will be in the specified folder
 
-## ตัวอย่างการใช้งาน
+## Example Usage
 
 ```bash
 npx plop
-# เลือก "create crud"
-# กำหนด destination
-# เลือกชื่อ Schema ที่จะสร้าง (เช่น product)
-# ระบบจะสร้างไฟล์ CRUD ให้โดยอัตโนมัติ
+# Select "create crud"
+# Specify the destination
+# Select the schema name to generate (e.g., product)
+# The system will automatically generate CRUD files
 ```
 
-## ข้อกำหนดเบื้องต้น
+## Prerequisites
 
 - Node.js
 - npm
