@@ -1,0 +1,72 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Like } from 'typeorm';
+import { {{pascalCase name}} } from './{{name}}.entity';
+import { Create{{pascalCase name}}Dto } from './dto/create-{{name}}.dto';
+import { Update{{pascalCase name}}Dto } from './dto/update-{{name}}.dto';
+
+interface FindAllOptions {
+  page: number;
+  limit: number;
+  sortField: string;
+  sortOrder: 'ASC' | 'DESC';
+  search?: string;
+}
+
+@Injectable()
+export class {{pascalCase name}}Service {
+  constructor(
+    @InjectRepository({{pascalCase name}})
+    private readonly repo: Repository<{{pascalCase name}}>
+  ) {}
+
+  async findAll(options: FindAllOptions) {
+    const { page, limit, sortField, sortOrder, search } = options;
+    const skip = (page - 1) * limit;
+
+    const where = search
+      ? [
+{{#each fields}}
+{{#if (eq this.type "string")}}
+          { {{this.name}}: Like(`%${search}%`) },
+{{/if}}
+{{/each}}
+        ]
+      : {};
+
+    const [items, total] = await this.repo.findAndCount({
+      where,
+      order: { [sortField]: sortOrder },
+      skip,
+      take: limit,
+    });
+
+    return {
+      data: items,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
+  }
+
+  async findOne(id: number) {
+    const item = await this.repo.findOneBy({ id });
+    if (!item) throw new NotFoundException(`${this.repo.metadata.name} not found`);
+    return item;
+  }
+
+  async create(dto: Create{{pascalCase name}}Dto) {
+    const item = this.repo.create(dto);
+    return this.repo.save(item);
+  }
+
+  async update(id: number, dto: Update{{pascalCase name}}Dto) {
+    await this.repo.update(id, dto);
+    return this.findOne(id);
+  }
+
+  async remove(id: number) {
+    const item = await this.findOne(id);
+    return this.repo.remove(item);
+  }
+}

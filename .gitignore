@@ -1,0 +1,10 @@
+node_modules
+# Ignore ทุกอย่าง
+*
+
+# ยกเว้น 
+!tools/
+!tools/**
+!package.json
+!plopfile.js
+!.gitignore

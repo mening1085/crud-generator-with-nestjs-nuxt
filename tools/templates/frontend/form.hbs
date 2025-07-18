@@ -1,0 +1,98 @@
+<template>
+  <UCard class="max-w-xl mx-auto mt-8">
+    <template #header>
+      <div class="text-xl font-bold">{{ formTitle }}</div>
+    </template>
+    <UForm :state="form" @submit="submit" class="space-y-4">
+      {{#each fields}}
+      <div>
+        <label class="block font-medium mb-1" :for="'{{this.name}}'">{{this.name}}</label>
+        {{#if (eq this.type "string")}}
+          <UInput
+            v-model="form.{{this.name}}"
+            id="{{this.name}}"
+            type="text"
+            :placeholder="'Enter {{this.name}}'"
+            {{#if this.required}}required{{/if}}
+            class="w-full"
+          />
+        {{else if (eq this.type "number")}}
+          <UInput
+            v-model.number="form.{{this.name}}"
+            id="{{this.name}}"
+            type="number"
+            :placeholder="'Enter {{this.name}}'"
+            {{#if this.required}}required{{/if}}
+            class="w-full"
+          />
+        {{else if (eq this.type "boolean")}}
+          <UToggle
+            v-model="form.{{this.name}}"
+            id="{{this.name}}"
+            :label="'{{this.name}}'"
+            class="mt-2"
+          />
+        {{else}}
+          <UInput
+            v-model="form.{{this.name}}"
+            id="{{this.name}}"
+            type="text"
+            :placeholder="'Enter {{this.name}}'"
+            class="w-full"
+          />
+        {{/if}}
+      </div>
+      {{/each}}
+
+      <div class="flex space-x-2">
+        <UButton type="submit" color="primary">Save</UButton>
+        <NuxtLink :to="`/{{name}}`">
+          <UButton color="gray" variant="soft">Cancel</UButton>
+        </NuxtLink>
+      </div>
+    </UForm>
+  </UCard>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { use{{pascalCase name}} } from '~/composables/use{{pascalCase name}}'
+
+const route = useRoute()
+const router = useRouter()
+const { fetchOne, create, update } = use{{pascalCase name}}()
+
+const id = route.query.id ? Number(route.query.id) : null
+const isEdit = computed(() => id !== null)
+
+const form = ref({
+  {{#each fields}}
+  {{this.name}}: {{#if (eq this.type "string")}}''{{else if (eq this.type "number")}}0{{else if (eq this.type "boolean")}}false{{else}}null{{/if}},
+  {{/each}}
+})
+
+const formTitle = computed(() => (isEdit.value ? 'Edit {{pascalCase name}}' : 'Create {{pascalCase name}}'))
+
+async function load() {
+  if (isEdit.value) {
+    const data = await fetchOne(id)
+    form.value = { ...form.value, ...data }
+  }
+}
+
+async function submit() {
+  try {
+    if (isEdit.value) {
+      await update(id, form.value)
+    } else {
+      await create(form.value)
+    }
+    router.push('/{{name}}')
+  } catch (err) {
+    alert('Failed to save: ' + err.message)
+  }
+}
+
+onMounted(load)
+</script>

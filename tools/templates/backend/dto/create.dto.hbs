@@ -1,0 +1,31 @@
+import { IsString, IsNumber, IsBoolean, IsOptional } from 'class-validator';
+
+export class Create{{pascalCase name}}Dto {
+{{#each fields}}
+  {{#if (eq this.type "string")}}
+  {{#if this.required}}
+  @IsString()
+  {{else}}
+  @IsString()
+  @IsOptional()
+  {{/if}}
+  {{else if (eq this.type "number")}}
+  {{#if this.required}}
+  @IsNumber()
+  {{else}}
+  @IsNumber()
+  @IsOptional()
+  {{/if}}
+  {{else if (eq this.type "boolean")}}
+  {{#if this.required}}
+  @IsBoolean()
+  {{else}}
+  @IsBoolean()
+  @IsOptional()
+  {{/if}}
+  {{else}}
+  @IsOptional()
+  {{/if}}
+  {{this.name}}: {{#if (eq this.type "string")}}string{{else if (eq this.type "number")}}number{{else if (eq this.type "boolean")}}boolean{{else}}any{{/if}};
+{{/each}}
+}

@@ -1,0 +1,154 @@
+<template>
+  <div class="max-w-5xl mx-auto mt-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+      <div class="text-xl font-bold">{{pascalCase name}} List</div>
+      <NuxtLink :to="`/{{name}}/form`">
+        <button class="bg-blue-600 text-white px-4 py-2 rounded">Add New</button>
+      </NuxtLink>
+    </div>
+
+    <!-- Search input -->
+    <input
+      v-model="searchQuery"
+      type="text"
+      placeholder="Search..."
+      class="mb-4 w-full max-w-sm border px-2 py-1 rounded"
+      @input="debouncedLoad"
+    />
+
+    <!-- Table -->
+    <table class="min-w-full border border-gray-300">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="border px-4 py-2">ID</th>
+          {{#each fields}}
+          <th class="border px-4 py-2">{{this.name}}</th>
+          {{/each}}
+          <th class="border px-4 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="row in paginatedRows" :key="row.id">
+          <td class="border px-4 py-2">{{ '{{ row.id }}' }}</td>
+          {{#each fields}}
+          <td class="border px-4 py-2">
+            {{#if (eq this.type "boolean")}}
+              <input type="checkbox" :checked="row.{{this.name}}" disabled />
+            {{else}}
+              {{{vueField this.name}}}
+            {{/if}}
+          </td>
+          {{/each}}
+          <td class="border px-4 py-2">
+            <NuxtLink :to="`/{{name}}/form?id=${'{{ row.id }}'}`">
+              <button class="text-blue-600 hover:underline">Edit</button>
+            </NuxtLink>
+            <button class="text-red-600 hover:underline ml-2" @click="remove(row.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="flex justify-center items-center mt-4 space-x-2">
+      <button class="px-2 py-1 border rounded" :disabled="currentPage === 1" @click="currentPage--">Prev</button>
+      <span>Page {{ currentPage }} / {{ totalPages }}</span>
+      <button class="px-2 py-1 border rounded" :disabled="currentPage === totalPages" @click="currentPage++">Next</button>
+    </div>
+
+    <!-- No result -->
+    <div v-if="filteredRows.length === 0" class="mt-4 text-center text-gray-500">
+      No data found.
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, watch } from 'vue'
+import { use{{pascalCase name}} } from '~/composables/use{{pascalCase name}}'
+import { debounce } from 'lodash-es'
+
+const fields = {{{json fields}}}
+const { fetchList, remove: deleteItem } = use{{pascalCase name}}()
+
+const rows = ref([])
+const searchQuery = ref('')
+const currentPage = ref(1)
+const pageSize = 10
+const sortField = ref('id')
+const sortAsc = ref(true)
+
+// Load data from API
+async function load() {
+  rows.value = await fetchList()
+}
+
+// Remove item
+function remove(id) {
+  if (confirm('Are you sure to delete this item?')) {
+    deleteItem(id).then(() => load())
+  }
+}
+
+// Sorting logic
+function sortBy(field) {
+  if (!field || field === 'actions') return
+  if (sortField.value === field) {
+    sortAsc.value = !sortAsc.value
+  } else {
+    sortField.value = field
+    sortAsc.value = true
+  }
+  currentPage.value = 1
+}
+
+// Filter by search query
+const filteredRows = computed(() => {
+  if (!searchQuery.value) return rows.value
+  return rows.value.filter(item => {
+    return fields.some(f => {
+      const val = item[f.name]
+      if (val === null || val === undefined) return false
+      return val.toString().toLowerCase().includes(searchQuery.value.toLowerCase())
+    })
+  })
+})
+
+// Sort rows
+const sortedRows = computed(() => {
+  return [...filteredRows.value].sort((a, b) => {
+    let aVal = a[sortField.value]
+    let bVal = b[sortField.value]
+
+    if (typeof aVal === 'string') aVal = aVal.toLowerCase()
+    if (typeof bVal === 'string') bVal = bVal.toLowerCase()
+
+    if (aVal < bVal) return sortAsc.value ? -1 : 1
+    if (aVal > bVal) return sortAsc.value ? 1 : -1
+    return 0
+  })
+})
+
+// Pagination
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(sortedRows.value.length / pageSize))
+)
+
+const paginatedRows = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  return sortedRows.value.slice(start, start + pageSize)
+})
+
+// Watch pagination
+watch(totalPages, (newVal) => {
+  if (currentPage.value > newVal) currentPage.value = newVal
+})
+
+// Debounce input
+const debouncedLoad = debounce(() => {
+  currentPage.value = 1
+}, 300)
+
+load()
+</script>

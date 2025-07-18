@@ -1,0 +1,48 @@
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, ParseIntPipe } from '@nestjs/common';
+import { {{pascalCase name}}Service } from './{{name}}.service';
+import { Create{{pascalCase name}}Dto } from './dto/create-{{name}}.dto';
+import { Update{{pascalCase name}}Dto } from './dto/update-{{name}}.dto';
+
+@Controller('{{kebabCase name}}')
+export class {{pascalCase name}}Controller {
+  constructor(private readonly {{name}}Service: {{pascalCase name}}Service) {}
+
+  @Get()
+  async findAll(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('sortField') sortField = 'id',
+    @Query('sortOrder') sortOrder = 'ASC',
+    @Query('q') q?: string,
+  ) {
+    limit = limit > 100 ? 100 : limit;
+
+    return this.{{name}}Service.findAll({
+      page: Number(page),
+      limit: Number(limit),
+      sortField,
+      sortOrder: sortOrder.toUpperCase() === 'DESC' ? 'DESC' : 'ASC',
+      search: q,
+    });
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.{{name}}Service.findOne(id);
+  }
+
+  @Post()
+  create(@Body() createDto: Create{{pascalCase name}}Dto) {
+    return this.{{name}}Service.create(createDto);
+  }
+
+  @Put(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateDto: Update{{pascalCase name}}Dto) {
+    return this.{{name}}Service.update(id, updateDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.{{name}}Service.remove(id);
+  }
+}

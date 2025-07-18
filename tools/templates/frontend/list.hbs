@@ -1,0 +1,102 @@
+<template>
+  <UCard class="max-w-5xl mx-auto mt-8">
+    <template #header>
+      <div class="flex justify-between items-center">
+        <div class="text-xl font-bold">{{pascalCase name}} List</div>
+        <NuxtLink :to="`/{{name}}/form`">
+          <UButton color="primary" icon="i-heroicons-plus">Add New</UButton>
+        </NuxtLink>
+      </div>
+    </template>
+
+    <div class="flex gap-2 mb-4">
+      <UInput
+        v-model="searchQuery"
+        type="text"
+        placeholder="Search..."
+        class="w-full max-w-sm"
+        @keyup.enter="onSearch"
+      />
+      <UButton color="primary" icon="i-heroicons-magnifying-glass" @click="onSearch">ค้นหา</UButton>
+    </div>
+
+    <UTable
+      :columns="columns"
+      :rows="rows"
+      class="mb-4"
+    >
+      <template #actions-data="{ row }">
+        <NuxtLink :to="`/{{name}}/form?id=${row.id}`">
+          <UButton size="sm" color="gray" variant="soft" icon="i-heroicons-pencil"></UButton>
+        </NuxtLink>
+        <UButton size="sm" color="red" variant="soft" class="ml-2" icon="i-heroicons-trash" @click="remove(row.id)"></UButton>
+      </template>
+      {{#each fields}}
+      <template #cell({{this.name}})="{ row }">
+        {{#if (eq this.type "boolean")}}
+          <UToggle v-model="row.{{this.name}}" disabled />
+        {{else}}
+          {{{vueField this.name}}}
+        {{/if}}
+      </template>
+      {{/each}}
+    </UTable>
+
+    <div class="flex justify-center items-center mt-4 space-x-2">
+      <UPagination v-model="currentPage" :page-count="pageSize" :total="totalRows" @click="load()" />
+    </div>
+
+    <div v-if="rows.length === 0" class="mt-4 text-center text-gray-500">
+      No data found.
+    </div>
+  </UCard>
+</template>
+
+<script setup>
+import { ref, computed, watch } from 'vue'
+import { use{{pascalCase name}} } from '~/composables/use{{pascalCase name}}'
+
+const fields = {{{json fields}}}
+const { fetchList, remove: deleteItem } = use{{pascalCase name}}()
+
+const rows = ref([])
+const searchQuery = ref('')
+const currentPage = ref(1)
+const totalRows = ref(1)
+const pageSize = 10;
+
+const columns = [
+  { key: 'id', label: 'ID', sortable: true },
+  {{#each fields}}
+  { key: '{{this.name}}', label: '{{this.name}}', sortable: true },
+  {{/each}}
+  { key: 'actions', label: 'Actions' }
+]
+
+async function load() {
+  const res = await fetchList({
+    page: currentPage.value,
+    search: searchQuery.value,
+    limit: pageSize.value,
+    sortField: undefined,
+    sortOrder: undefined,
+  })
+  rows.value = res?.data
+  totalRows.value = res?.totalRows ? parseInt(res?.totalRows) : 1;
+}
+
+function remove(id) {
+  if (confirm('Are you sure to delete this item?')) {
+    deleteItem(id).then(() => load())
+  }
+}
+
+function onSearch() {
+  currentPage.value = 1
+  load()
+}
+
+onMounted(() => {
+  load();
+});
+</script>

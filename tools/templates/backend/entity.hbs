@@ -1,0 +1,21 @@
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, DeleteDateColumn,UpdateDateColumn } from 'typeorm';
+
+@Entity()
+export class {{pascalCase name}} {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  {{#each fields}}
+  @Column({{#if this.nullable}}{ nullable: true }{{/if}})
+  {{this.name}}: {{#if (eq this.type "string")}}string{{else if (eq this.type "number")}}number{{else if (eq this.type "boolean")}}boolean{{else}}any{{/if}};
+  {{/each}}
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
+}

@@ -1,0 +1,38 @@
+import { ref } from 'vue'
+
+export function use{{pascalCase name}}() {
+  const config = useRuntimeConfig()
+  const baseUrl = config.public.apiBase + '/{{name}}'
+
+  async function fetchList(payload: any) {
+    return await $fetch(baseUrl, {
+      query: payload
+    })
+  }
+
+  async function fetchOne(id: number) {
+    return await $fetch(`${baseUrl}/${id}`)
+  }
+
+  async function create(payload: any) {
+    await $fetch(baseUrl, {
+      method: 'POST',
+      body: payload,
+    })
+  }
+
+  async function update(id: number, payload: any) {
+    await $fetch(`${baseUrl}/${id}`, {
+      method: 'PUT',
+      body: payload,
+    })
+  }
+
+  async function remove(id: number) {
+    await $fetch(`${baseUrl}/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  return {  fetchList, fetchOne, create, update, remove }
+}
