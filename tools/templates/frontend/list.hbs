@@ -32,7 +32,7 @@
         <UButton size="sm" color="red" variant="soft" class="ml-2" icon="i-heroicons-trash" @click="remove(row.id)"></UButton>
       </template>
       {{#each fields}}
-      <template #cell({{this.name}})="{ row }">
+      <template #{{this.name}}-data="{ row }">
         {{#if (eq this.type "boolean")}}
           <UToggle v-model="row.{{this.name}}" disabled />
         {{else}}
