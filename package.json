@@ -3,6 +3,10 @@
   "version": "1.0.3",
   "description": "A CRUD generator tool with Nuxt3 and Nestjs",
   "main": "plopfile.js",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start"
+  },
   "author": "Ginz",
   "license": "MIT",
   "devDependencies": {

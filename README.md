@@ -36,11 +36,11 @@ crud-generator/
 ```js
 // tools/schemas/product.js
 module.exports = {
-  name: 'product',
+  name: "product",
   fields: [
-    { name: 'title', type: 'string', required: true },
-    { name: 'price', type: 'number', required: true },
-    { name: 'isActive', type: 'boolean', required: false },
+    { name: "title", type: "string", required: true },
+    { name: "price", type: "number", required: true },
+    { name: "isActive", type: "boolean", required: false },
   ],
 };
 ```
@@ -70,3 +70,28 @@ npx plop
 
 - Node.js
 - npm
+
+---
+
+## [NEW] Web UI + API CRUD Generator (React + Tailwind + Express.js)
+
+ระบบจะถูกเพิ่มด้วย 2 ส่วนใหม่:
+
+- **/backend/** : Express.js API สำหรับรับ/บันทึก schema, generate, delete CRUD
+- **/frontend/** : React + Tailwind UI สำหรับกรอก schema, เลือก generate/delete CRUD
+
+### Flow การทำงาน
+
+1. ผู้ใช้กรอก schema หรือเลือก schema ที่มีอยู่ผ่านหน้าเว็บ
+2. กดปุ่ม generate/delete CRUD ได้ทันที
+3. Express API จะบันทึก schema เป็นไฟล์ และสั่ง generate CRUD โดยใช้ logic เดิม (plop)
+
+### โครงสร้างไฟล์ใหม่
+
+```
+/backend/         <-- Express API
+/frontend/        <-- React + Tailwind
+/tools/schemas/   <-- schema ที่ใช้ร่วมกัน
+```
+
+---

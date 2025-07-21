@@ -3,11 +3,11 @@ const path = require("path");
 const currentFolderName = path.basename(process.cwd());
 
 module.exports = function (plop) {
-  plop.setHelper('eq', (a, b) => a === b);
-  plop.setHelper('or', (a, b) => a || b);
-  plop.setHelper('get', (obj, key) => obj && obj[key]);
-  plop.setHelper('json', obj => JSON.stringify(obj, null, 2));
-  plop.setHelper('vueField', name => `{{ row.${name} }}`);
+  plop.setHelper("eq", (a, b) => a === b);
+  plop.setHelper("or", (a, b) => a || b);
+  plop.setHelper("get", (obj, key) => obj && obj[key]);
+  plop.setHelper("json", (obj) => JSON.stringify(obj, null, 2));
+  plop.setHelper("vueField", (name) => `{{ row.${name} }}`);
   // Custom action type สำหรับลบ import/module ใน app.module.ts
   plop.setActionType("delete-appmodule-import", function (answers) {
     return new Promise((resolve, reject) => {
@@ -40,9 +40,8 @@ module.exports = function (plop) {
     });
   });
 
-  
   //! todo: change app folder of frontend
-  const appFolder = ''
+  const appFolder = "";
 
   // Custom action type สำหรับลบไฟล์ CRUD ทั้งหมด
   plop.setActionType("delete-crud-files", function (answers) {
@@ -124,6 +123,15 @@ module.exports = function (plop) {
     });
   });
 
+  // Helper สำหรับอ่าน argument จาก process.argv
+  function getArgValue(name) {
+    const idx = process.argv.findIndex((arg) => arg === `--${name}`);
+    if (idx !== -1 && process.argv[idx + 1]) {
+      return process.argv[idx + 1];
+    }
+    return undefined;
+  }
+
   // Generator CRUD (เพิ่มเติม DTO และไฟล์ครบ)
   plop.setGenerator("crud-from-schema", {
     description: "Generate CRUD backend + frontend from schema",
@@ -142,6 +150,7 @@ module.exports = function (plop) {
           }
           return true;
         },
+        when: () => !getArgValue("projectName"),
       },
       {
         type: "list",
@@ -156,15 +165,20 @@ module.exports = function (plop) {
             .filter((f) => f.endsWith(".schema.js"))
             .map((f) => f.replace(".schema.js", ""));
         },
+        when: () => !getArgValue("schemaFile"),
       },
     ],
     actions: (data) => {
+      // รับค่าจาก argument ถ้ามี
+      data.projectName = data.projectName || getArgValue("projectName");
+      data.schemaFile = data.schemaFile || getArgValue("schemaFile");
       // require schema file
       const path = require("path");
-      const schema = require(path.join(__dirname, "tools/schemas", `${data.schemaFile}.schema.js`));
+      const schema = require(
+        path.join(__dirname, "tools/schemas", `${data.schemaFile}.schema.js`)
+      );
       data.name = schema.name;
       data.fields = schema.fields;
-
 
       const actions = [
         // backend
@@ -263,6 +277,7 @@ module.exports = function (plop) {
           }
           return true;
         },
+        when: () => !getArgValue("projectName"),
       },
       {
         type: "list",
@@ -277,9 +292,13 @@ module.exports = function (plop) {
             .filter((f) => f.endsWith(".schema.js"))
             .map((f) => f.replace(".schema.js", ""));
         },
+        when: () => !getArgValue("entityName"),
       },
     ],
     actions: (data) => {
+      // รับค่าจาก argument ถ้ามี
+      data.projectName = data.projectName || getArgValue("projectName");
+      data.entityName = data.entityName || getArgValue("entityName");
       // สร้าง PascalCase สำหรับ entity name
       const pascalCaseName =
         data.entityName.charAt(0).toUpperCase() + data.entityName.slice(1);
