@@ -9,3 +9,7 @@ node_modules
 !plopfile.js
 !.gitignore
 !README.md
+!frontend
+!backend
+frontend/node_modules
+backend/node_modules
