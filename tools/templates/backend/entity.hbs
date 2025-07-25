@@ -1,21 +1,72 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, DeleteDateColumn,UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,
+DeleteDateColumn, UpdateDateColumn, } from 'typeorm'; @Entity() export class
+{{pascalCase name}}
+{ @PrimaryGeneratedColumn() id: number;
 
-@Entity()
-export class {{pascalCase name}} {
-  @PrimaryGeneratedColumn()
-  id: number;
+{{#each fields}}
+  @Column({
+  {{#if this.primaryKey}}
+    primary: true,
+  {{/if}}
+  {{#if this.unique}}
+    unique: true,
+  {{/if}}
+  {{#if this.defaultValue}}
+    default: '{{this.defaultValue}}',
+  {{/if}}
+  {{#if (eq this.type "decimal")}}
+    type: 'decimal', precision: 10, scale: 2, default: 0, transformer: { to:
+    (value: number) => value, from: (value: string) => parseFloat(value), },
+  {{else if (eq this.type "boolean")}}
+    type: 'boolean',
+  {{else if
+    (or (eq this.type "select") (eq this.type "email") (eq this.type "string"))
+  }}
+    type: 'varchar',
+    {{#if (eq this.type "email")}}
+      length: 255,
+    {{else if (eq this.type "select")}}
+      length: 100,
+    {{else}}
+      length: 255,
+    {{/if}}
+  {{else if (eq this.type "textarea")}}
+    type: 'text',
+  {{else if (eq this.type "date")}}
+    type: 'date',
+  {{else if (eq this.type "datetime")}}
+    type: 'timestamp',
+  {{else if (or (eq this.type "number") (eq this.type "integer"))}}
+    type: 'int',
+  {{else if (or (eq this.type "float") (eq this.type "double"))}}
+    type: 'float',
+  {{else}}
+    type: 'varchar', length: 255,
+  {{/if}}
+  {{#if this.nullable}}
+    nullable: true,
+  {{/if}}
+  })
+  {{this.name}}:
+  {{#if
+    (or
+      (eq this.type "string")
+      (eq this.type "email")
+      (eq this.type "textarea")
+      (eq this.type "select")
+    )
+  }}string{{else if
+    (or
+      (eq this.type "number")
+      (eq this.type "integer")
+      (eq this.type "float")
+      (eq this.type "double")
+      (eq this.type "decimal")
+    )
+  }}number{{else if (eq this.type "boolean")}}boolean{{else if
+    (or (eq this.type "date") (eq this.type "datetime"))
+  }}Date{{else}}any{{/if}};
 
-  {{#each fields}}
-  @Column({{#if this.nullable}}{ nullable: true }{{/if}})
-  {{this.name}}: {{#if (eq this.type "string")}}string{{else if (eq this.type "number")}}number{{else if (eq this.type "boolean")}}boolean{{else}}any{{/if}};
-  {{/each}}
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
-
-  @DeleteDateColumn()
-  deleted_at: Date;
-}
+{{/each}}
+@CreateDateColumn() created_at: Date; @UpdateDateColumn() updated_at: Date;
+@DeleteDateColumn() deleted_at: Date; }

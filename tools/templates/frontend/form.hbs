@@ -32,6 +32,41 @@
             :label="'{{this.name}}'"
             class="mt-2"
           />
+        {{else if (or (eq this.type "date") (eq this.type "datetime"))}}
+          <UInput
+            v-model="form.{{this.name}}"
+            id="{{this.name}}"
+            type="{{#if (eq this.type "datetime")}}datetime-local{{else}}date{{/if}}"
+            {{#if this.required}}required{{/if}}
+            class="w-full"
+          />
+        {{else if (eq this.type "select")}}
+          <USelect
+            v-model="form.{{this.name}}"
+            id="{{this.name}}"
+            :options="{{this.name}}Options"
+            :placeholder="'Select {{this.name}}'"
+            {{#if this.required}}required{{/if}}
+            class="w-full"
+          />
+        {{else if (eq this.type "email")}}
+          <UInput
+            v-model="form.{{this.name}}"
+            id="{{this.name}}"
+            type="email"
+            :placeholder="'Enter {{this.name}}'"
+            {{#if this.required}}required{{/if}}
+            class="w-full"
+          />
+        {{else if (eq this.type "textarea")}}
+          <UTextarea
+            v-model="form.{{this.name}}"
+            id="{{this.name}}"
+            :placeholder="'Enter {{this.name}}'"
+            {{#if this.required}}required{{/if}}
+            class="w-full"
+            rows="3"
+          />
         {{else}}
           <UInput
             v-model="form.{{this.name}}"
@@ -68,25 +103,62 @@ const isEdit = computed(() => id !== null)
 
 const form = ref({
   {{#each fields}}
-  {{this.name}}: {{#if (eq this.type "string")}}''{{else if (eq this.type "number")}}0{{else if (eq this.type "boolean")}}false{{else}}null{{/if}},
+  {{this.name}}: {{#if (eq this.type "string")}}''{{else if (eq this.type "number")}}0{{else if (eq this.type "boolean")}}false{{else if (or (eq this.type "date") (eq this.type "datetime"))}}''{{else if (eq this.type "select")}}''{{else if (eq this.type "email")}}''{{else if (eq this.type "textarea")}}''{{else}}null{{/if}},
   {{/each}}
 })
+
+{{#each fields}}
+{{#if (eq this.type "select")}}
+// Options for {{this.name}} select field
+const {{this.name}}Options = ref([
+  {{#if this.options}}
+  {{#each this.options}}
+  { label: '{{this.label}}', value: '{{this.value}}' },
+  {{/each}}
+  {{else}}
+  { label: 'Option 1', value: 'option1' },
+  { label: 'Option 2', value: 'option2' },
+  { label: 'Option 3', value: 'option3' },
+  {{/if}}
+])
+{{/if}}
+{{/each}}
 
 const formTitle = computed(() => (isEdit.value ? 'Edit {{pascalCase name}}' : 'Create {{pascalCase name}}'))
 
 async function load() {
   if (isEdit.value) {
     const data = await fetchOne(id)
+    // Format date fields for input
+    {{#each fields}}
+    {{#if (or (eq this.type "date") (eq this.type "datetime"))}}
+    if (data.{{this.name}}) {
+      data.{{this.name}} = new Date(data.{{this.name}}).toISOString().slice(0, {{#if (eq this.type "datetime")}}16{{else}}10{{/if}})
+    }
+    {{/if}}
+    {{/each}}
     form.value = { ...form.value, ...data }
   }
 }
 
 async function submit() {
   try {
+    // Prepare form data for submission
+    const formData = { ...form.value }
+    
+    // Convert date fields to proper format
+    {{#each fields}}
+    {{#if (or (eq this.type "date") (eq this.type "datetime"))}}
+    if (formData.{{this.name}}) {
+      formData.{{this.name}} = new Date(formData.{{this.name}}).toISOString()
+    }
+    {{/if}}
+    {{/each}}
+
     if (isEdit.value) {
-      await update(id, form.value)
+      await update(id, formData)
     } else {
-      await create(form.value)
+      await create(formData)
     }
     router.push('/{{name}}')
   } catch (err) {

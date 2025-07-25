@@ -6,7 +6,7 @@ export default function App() {
   const [schemas, setSchemas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: '', fields: [{ name: '', type: 'string', required: false }] });
-  const [projectName, setProjectName] = useState('crud-gen');
+  const [projectName, setProjectName] = useState('example');
   const [message, setMessage] = useState('');
 
   // โหลด schema
@@ -137,7 +137,16 @@ export default function App() {
                     <select className="border p-1 rounded" value={field.type} onChange={e => handleFieldChange(idx, 'type', e.target.value)}>
                       <option value="string">string</option>
                       <option value="number">number</option>
+                      <option value="float">float</option>
+                      <option value="integer">integer</option>
+                      <option value="double">double</option>
+                      <option value="decimal">decimal</option>
                       <option value="boolean">boolean</option>
+                      <option value="email">email</option>
+                      <option value="select">select</option>
+                      <option value="textarea">textarea</option>
+                      <option value="date">date</option>
+                      <option value="datetime">datetime</option>
                     </select>
                     <label className="flex items-center gap-1 text-xs">
                       <input type="checkbox" checked={field.required} onChange={e => handleFieldChange(idx, 'required', e.target.checked)} /> required

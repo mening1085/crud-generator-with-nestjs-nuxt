@@ -5,7 +5,9 @@
   "main": "plopfile.js",
   "scripts": {
     "dev:backend": "cd backend && npm run dev",
-    "dev:frontend": "cd frontend && npm start"
+    "dev:frontend": "cd frontend && npm start",
+    "plop": "plop",
+    "generate": "plop"
   },
   "author": "Ginz",
   "license": "MIT",

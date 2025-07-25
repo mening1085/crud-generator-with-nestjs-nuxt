@@ -13,7 +13,7 @@ export class {{pascalCase name}}Controller {
     @Query('limit') limit = 10,
     @Query('sortField') sortField = 'id',
     @Query('sortOrder') sortOrder = 'ASC',
-    @Query('q') q?: string,
+    @Query('search') search?: string,
   ) {
     limit = limit > 100 ? 100 : limit;
 
@@ -22,7 +22,7 @@ export class {{pascalCase name}}Controller {
       limit: Number(limit),
       sortField,
       sortOrder: sortOrder.toUpperCase() === 'DESC' ? 'DESC' : 'ASC',
-      search: q,
+      search: search,
     });
   }
 

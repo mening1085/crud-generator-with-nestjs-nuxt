@@ -1,5 +1,5 @@
 <template>
-  <UCard class="max-w-5xl mx-auto mt-8">
+  <UCard class="max-w-full mx-auto mt-8">
     <template #header>
       <div class="flex justify-between items-center">
         <div class="text-xl font-bold">{{pascalCase name}} List</div>
@@ -12,11 +12,24 @@
     <div class="flex gap-2 mb-4">
       <UInput
         v-model="searchQuery"
-        type="text"
+        name="searchQuery"
         placeholder="Search..."
-        class="w-full max-w-sm"
+        icon="i-heroicons-magnifying-glass-20-solid"
+        autocomplete="off"
+        :ui="{ icon: { trailing: { pointer: '' } } }"
         @keyup.enter="onSearch"
-      />
+      >
+        <template #trailing>
+          <UButton
+            v-show="searchQuery !== ''"
+            color="gray"
+            variant="link"
+            icon="i-heroicons-x-mark-20-solid"
+            :padded="false"
+            @click="onClearable"
+          />
+        </template>
+      </UInput>
       <UButton color="primary" icon="i-heroicons-magnifying-glass" @click="onSearch">ค้นหา</UButton>
     </div>
 
@@ -89,6 +102,12 @@ function remove(id) {
   if (confirm('Are you sure to delete this item?')) {
     deleteItem(id).then(() => load())
   }
+}
+
+function onClearable() {
+  searchQuery.value = "";
+  currentPage.value = 1;
+  load();
 }
 
 function onSearch() {

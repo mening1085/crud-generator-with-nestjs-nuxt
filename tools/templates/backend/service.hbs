@@ -27,7 +27,7 @@ export class {{pascalCase name}}Service {
     const where = search
       ? [
 {{#each fields}}
-{{#if (eq this.type "string")}}
+{{#if (or (eq this.type "string") (eq this.type "email"))}}
           { {{this.name}}: Like(`%${search}%`) },
 {{/if}}
 {{/each}}
