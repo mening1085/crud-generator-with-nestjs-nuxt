@@ -1,6 +1,6 @@
 {
   "name": "crud-generator-nuxt3-nestjs",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A CRUD generator tool with Nuxt3 and Nestjs",
   "main": "plopfile.js",
   "scripts": {

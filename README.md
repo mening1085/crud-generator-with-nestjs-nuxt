@@ -75,23 +75,23 @@ npx plop
 
 ## [NEW] Web UI + API CRUD Generator (React + Tailwind + Express.js)
 
-ระบบจะถูกเพิ่มด้วย 2 ส่วนใหม่:
+The system will be enhanced with 2 new components:
 
-- **/backend/** : Express.js API สำหรับรับ/บันทึก schema, generate, delete CRUD
-- **/frontend/** : React + Tailwind UI สำหรับกรอก schema, เลือก generate/delete CRUD
+- **/backend/** : Express.js API for receiving/saving schemas, generating, and deleting CRUD
+- **/frontend/** : React + Tailwind UI for schema input, selecting generate/delete CRUD operations
 
-### Flow การทำงาน
+### Workflow
 
-1. ผู้ใช้กรอก schema หรือเลือก schema ที่มีอยู่ผ่านหน้าเว็บ
-2. กดปุ่ม generate/delete CRUD ได้ทันที
-3. Express API จะบันทึก schema เป็นไฟล์ และสั่ง generate CRUD โดยใช้ logic เดิม (plop)
+1. Users input schema or select existing schemas through the web interface
+2. Click generate/delete CRUD buttons instantly
+3. Express API will save the schema as a file and execute CRUD generation using existing logic (plop)
 
-### โครงสร้างไฟล์ใหม่
+### New File Structure
 
 ```
 /backend/         <-- Express API
 /frontend/        <-- React + Tailwind
-/tools/schemas/   <-- schema ที่ใช้ร่วมกัน
+/tools/schemas/   <-- Shared schemas
 ```
 
 ---
