@@ -113,9 +113,10 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <header className="bg-indigo-700 text-white py-6 shadow-md mb-8">
         <div className="max-w-5xl mx-auto px-4 flex items-center gap-3">
-          Sximen
+          
+          <h1 className="text-2xl font-bold tracking-wide">Sximen </h1>
           <span className="text-3xl">⚡</span>
-          <h1 className="text-2xl font-bold tracking-wide">CRUD Generator UI by </h1>
+          <h1 className="text-2xl font-bold tracking-wide">CRUD Generator </h1>
         </div>
       </header>
       <main className="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-1 gap-8">
