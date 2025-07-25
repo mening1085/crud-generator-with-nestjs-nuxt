@@ -9,6 +9,7 @@ node_modules
 !plopfile.js
 !.gitignore
 !README.md
+!FIELD_TYPES.md
 
 !frontend/
 !frontend/**
