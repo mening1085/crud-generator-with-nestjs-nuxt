@@ -38,12 +38,12 @@ export default function App() {
       body: JSON.stringify(form),
     });
     if (res.ok) {
-      setForm({ name: '', fields: [{ name: '', type: 'string', required: false }] });
-      fetchSchemas();
-      setMessage('✅ สร้าง schema สำเร็จ');
-    } else {
-      setMessage('❌ เกิดข้อผิดพลาดในการสร้าง schema');
-    }
+        setForm({ name: '', fields: [{ name: '', type: 'string', required: false }] });
+        fetchSchemas();
+        setMessage('✅ Schema created successfully');
+      } else {
+        setMessage('❌ Error creating schema');
+      }
     setLoading(false);
   };
 
@@ -56,8 +56,8 @@ export default function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ projectName, schemaName }),
     });
-    if (res.ok) setMessage('✅ Generate CRUD สำเร็จ');
-    else setMessage('❌ เกิดข้อผิดพลาดในการ generate CRUD');
+    if (res.ok) setMessage('✅ CRUD generated successfully');
+    else setMessage('❌ Error generating CRUD');
     setLoading(false);
   };
 
@@ -70,8 +70,8 @@ export default function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ projectName, entityName }),
     });
-    if (res.ok) setMessage('🗑️ ลบ CRUD สำเร็จ');
-    else setMessage('❌ เกิดข้อผิดพลาดในการลบ CRUD');
+    if (res.ok) setMessage('🗑️ CRUD deleted successfully');
+    else setMessage('❌ Error deleting CRUD');
     setLoading(false);
   };
 
@@ -96,15 +96,15 @@ export default function App() {
 
   // ลบไฟล์ schema จริง
   const handleDeleteSchema = async (schemaName) => {
-    if (!window.confirm(`ต้องการลบ schema '${schemaName}' จริงหรือไม่?`)) return;
+    if (!window.confirm(`Do you want to delete schema '${schemaName}'?`)) return;
     setLoading(true);
     setMessage('');
     const res = await fetch(`${API}/schemas/${schemaName}`, { method: 'DELETE' });
     if (res.ok) {
-      setMessage(`🗑️ ลบ schema '${schemaName}' สำเร็จ`);
+      setMessage(`🗑️ Schema '${schemaName}' deleted successfully`);
       fetchSchemas();
     } else {
-      setMessage('❌ เกิดข้อผิดพลาดในการลบ schema');
+      setMessage('❌ Error deleting schema');
     }
     setLoading(false);
   };
@@ -122,11 +122,11 @@ export default function App() {
       <main className="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-1 gap-8">
         {/* ซ้าย: ฟอร์มสร้าง/แก้ไข schema */}
         <section className="bg-white rounded-xl shadow p-6 flex flex-col gap-4 border border-indigo-100">
-          <h2 className="font-semibold text-lg mb-2 flex items-center gap-2"><span>📝</span>สร้าง Schema ใหม่</h2>
+          <h2 className="font-semibold text-lg mb-2 flex items-center gap-2"><span>📝</span>Create New Schema</h2>
           <form onSubmit={submitSchema} className="space-y-3">
             <div>
-              <label className="block text-sm font-medium mb-1">ชื่อ schema</label>
-              <input className="border border-indigo-300 p-2 rounded w-full focus:ring-2 focus:ring-indigo-200" placeholder="เช่น product" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
+              <label className="block text-sm font-medium mb-1">Schema Name</label>
+              <input className="border border-indigo-300 p-2 rounded w-full focus:ring-2 focus:ring-indigo-200" placeholder="e.g. product" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Fields</label>
@@ -151,19 +151,19 @@ export default function App() {
                     <label className="flex items-center gap-1 text-xs">
                       <input type="checkbox" checked={field.required} onChange={e => handleFieldChange(idx, 'required', e.target.checked)} /> required
                     </label>
-                    {form.fields.length > 1 && <button type="button" className="text-red-500 hover:text-red-700 text-lg" onClick={() => removeField(idx)} title="ลบ field">✖️</button>}
+                    {form.fields.length > 1 && <button type="button" className="text-red-500 hover:text-red-700 text-lg" onClick={() => removeField(idx)} title="Remove field">✖️</button>}
                   </div>
                 ))}
-                <button type="button" className="text-indigo-600 hover:underline text-sm mt-1" onClick={addField}>+ เพิ่ม field</button>
+                <button type="button" className="text-indigo-600 hover:underline text-sm mt-1" onClick={addField}>+ Add field</button>
               </div>
             </div>
-            <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition disabled:opacity-50" disabled={loading}>💾 บันทึก schema</button>
+            <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition disabled:opacity-50" disabled={loading}>💾 Save Schema</button>
           </form>
         </section>
         {/* ขวา: รายการ schema + action */}
         <section className="flex flex-col gap-4">
           <div className="bg-white rounded-xl shadow p-6 border border-indigo-100">
-            <h2 className="font-semibold text-lg mb-4 flex items-center gap-2"><span>📦</span>จัดการ Schema</h2>
+            <h2 className="font-semibold text-lg mb-4 flex items-center gap-2"><span>📦</span>Schema Management</h2>
             <div className="mb-3">
               <label className="text-sm font-medium">Project Name: </label>
               <input className="border p-1 rounded ml-2 w-40" value={projectName} onChange={e => setProjectName(e.target.value)} />
@@ -172,13 +172,13 @@ export default function App() {
               <table className="min-w-full text-sm border rounded">
                 <thead>
                   <tr className="bg-indigo-50 text-indigo-700">
-                    <th className="py-2 px-3 text-left w-1/2">ชื่อ Schema</th>
-                    <th className="py-2 px-3 text-left w-1/2">Action</th>
+                    <th className="py-2 px-3 text-left w-1/2">Schema Name</th>
+                    <th className="py-2 px-3 text-left w-1/2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {schemas.length === 0 && (
-                    <tr><td colSpan={2} className="text-gray-400 py-2 text-center">ยังไม่มี schema</td></tr>
+                    <tr><td colSpan={2} className="text-gray-400 py-2 text-center">No schemas yet</td></tr>
                   )}
                   {schemas.map(s => (
                     <tr key={s} className="border-b last:border-b-0">
@@ -196,7 +196,7 @@ export default function App() {
             </div>
           </div>
           {message && <div className="p-3 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded shadow-sm animate-pulse">{message}</div>}
-          {loading && <div className="flex items-center gap-2 text-gray-500"><span className="animate-spin">⏳</span>กำลังดำเนินการ...</div>}
+          {loading && <div className="flex items-center gap-2 text-gray-500"><span className="animate-spin">⏳</span>Processing...</div>}
         </section>
       </main>
       <footer className="text-center text-xs text-gray-400 py-6 mt-10">CRUD Generator UI &copy; {new Date().getFullYear()}</footer>
